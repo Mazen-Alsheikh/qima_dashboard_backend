@@ -20,8 +20,10 @@ app.post("/api/project/add", addProject);
 app.post("/api/project/delete", deleteProject);
 app.post("/api/project/edit", editProject);
 
-const port = process.env.SERVER_PORT || 5000;
+// ✅ استخدام PORT من Railway
+const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
+// ✅ accept all connections
+app.listen(port, "0.0.0.0", () => {
     console.log("Server is online");
 });
