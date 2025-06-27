@@ -20,7 +20,7 @@ app.post("/api/project/add", addProject);
 app.post("/api/project/delete", deleteProject);
 app.post("/api/project/edit", editProject);
 
-const port = process.env.SERVER_PORT;
+const port = process.env.SERVER_PORT || 5000;
 
 app.listen(port, () => {
     console.log("Server is online");
