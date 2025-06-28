@@ -26,8 +26,10 @@ app.post("/api/users/insert", InserUser);
 app.post("/api/users/update", updateUser);
 app.post("/api/users/delete", deleteUser);
 
-const port = process.env.SERVER_PORT;
+// ✅ استخدام PORT من Railway
+const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
+// ✅ accept all connections
+app.listen(port, "0.0.0.0", () => {
     console.log("Server is online");
 });
