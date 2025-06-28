@@ -18,14 +18,14 @@ exports.addProject = (req, res) => {
     const {name, type, hood, longitude, latitude} = req.body;
 
     if (!name || !type || !hood || !longitude || !latitude) {
-        return res.json({message: "يجب إكمال جميع الحقول"});
+        return res.status(400).json({message: "يجب إكمال جميع الحقول"});
     }
 
     db.query("SELECT * FROM projects WHERE name = ?", name, (error, result) => {
         
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
 
-        if (result.length > 0) return res.status(404).json({message: "المعاملة موجودة بالفعل"});
+        if (result.length > 0) return res.status(400).json({message: "المعاملة موجودة بالفعل"});
 
         db.query("INSERT INTO projects(name, hood, sort_type, longitude, latitude) VALUES (?, ?, ?, ?, ?)", [name, hood, type, longitude, latitude], (error, result) => {
             
