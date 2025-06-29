@@ -1,7 +1,19 @@
 const db = require("../connect");
 const bcrypt = require("bcrypt");
 
-exports.InserUser = (req, res) => {
+exports.getUsers = (req, res) => {
+
+    db.query("SELECT * FROM qimadashboard.users", (error, result) => {
+
+        if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
+
+        return res.status(200).json({message: "تم جبل المستخدمين بنجاح", data: result});        
+
+    });
+
+};
+
+exports.addUser = (req, res) => {
     
     const {name, email, password, role} = req.body;
 
@@ -9,13 +21,13 @@ exports.InserUser = (req, res) => {
         return res.status(400).json({message: "يجب إكمال جميع الحقول"});
     }
 
-    db.query("SELECT * FROM users WHERE email = ?", email, async (error, result) => {
+    db.query("SELECT * FROM qimadashboard.users WHERE email = ?", email, async (error, result) => {
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
         if (result.length > 0) return res.status(400).json({message: "المستخدم موجود بالفعل"});
 
         const hashedPassord = await bcrypt.hash(password, 10);
 
-        db.query("INSERT INTO users(name, email, password, role) VALUES(?, ?, ?, ?)", [name, email, hashedPassord, role], (error, result) => {
+        db.query("INSERT INTO qimadashboard.users(name, email, password, role) VALUES(?, ?, ?, ?)", [name, email, hashedPassord, role], (error, result) => {
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
         return res.status(201).json({message: "تم إضافة مستخدم جديد بنجاح"});
         });
@@ -23,7 +35,7 @@ exports.InserUser = (req, res) => {
 
 };
 
-exports.updateUser = (req, res) => {
+exports.editUser = (req, res) => {
     
     const {name, email, oldpassword, newPassword, role} = req.body;
 
@@ -31,7 +43,7 @@ exports.updateUser = (req, res) => {
         return res.status(400).json({message: "يجب إكمال جميع الحقول"});
     }
 
-    db.query("SELECT * FROM users WHERE email = ?", [email], async (error, result) => {
+    db.query("SELECT * FROM qimadashboard.users WHERE email = ?", [email], async (error, result) => {
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
         if (result.length === 0) return res.status(404).json({message: "المستخدم غير موجود"});
         
@@ -43,7 +55,7 @@ exports.updateUser = (req, res) => {
 
         const passwordToUpdate = newPassword ? await bcrypt.hash(newPassword, 10) : userData.password;
 
-        db.query("UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE email = ?", [name, email, passwordToUpdate, role, email], (error, result) => {
+        db.query("UPDATE qimadashboard.users SET name = ?, email = ?, password = ?, role = ? WHERE email = ?", [name, email, passwordToUpdate, role, email], (error, result) => {
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
         return res.status(201).json({message: "تم تحديث بيانات المستخدم بنجاح"});
         });
@@ -54,7 +66,7 @@ exports.updateUser = (req, res) => {
 exports.deleteUser = (req, res) => {
     
     const email = req.body.email;
-    db.query("DELETE FROM users WHERE email = ?", email, (error, result) => {
+    db.query("DELETE FROM qimadashboard.users WHERE email = ?", email, (error, result) => {
         if (error) return res.status(500).json({message: "خطأ في قاعدة البيانات"});
         return res.status(200).json({message: "تم حذف المستخدم بنجاح"});
 })};
